@@ -8,6 +8,7 @@ import (
     "github.com/couchand/alisp/tree"
     "github.com/couchand/alisp/lexer"
     "github.com/couchand/alisp/parser"
+    "github.com/couchand/alisp/eval"
 )
 
 func Start(input *bufio.Reader, output *bufio.Writer) {
@@ -21,14 +22,26 @@ func Start(input *bufio.Reader, output *bufio.Writer) {
         output.Flush()
     }
 
+    run := func(t tree.SyntaxTree) {
+        defer func() {
+            if r := recover(); r != nil {
+                log("Eval Error: %s", r)
+            }
+        }()
+
+        log("%v", eval.Eval(t))
+    }
+
     parse := func(l string) tree.SyntaxTree {
         var parsed tree.SyntaxTree
 
         defer func() {
             if r := recover(); r != nil {
-                log("Error: %s", r)
+                log("Parse Error: %s", r)
             } else {
-                log("%v", parsed)
+                //log("Parsed: %v", parsed)
+
+                run(parsed)
             }
         }()
 

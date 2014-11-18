@@ -5,7 +5,7 @@ import "testing"
 func TestAtom(t *testing.T) {
     a := Atom("a")
 
-    if len(a.Children) != 0 {
+    if !a.IsAtom() {
         t.Errorf("Expecting Atom")
     }
     if a.Text != "a" {
@@ -18,6 +18,9 @@ func TestList(t *testing.T) {
     sl := []SyntaxTree{ a, b, c }
     l := List(sl)
 
+    if !l.IsList() {
+        t.Errorf("Expecting List")
+    }
     if len(l.Children) != 3 {
         t.Errorf("Expecting List")
     }

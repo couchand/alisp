@@ -18,8 +18,16 @@ func List(elements []SyntaxTree) SyntaxTree {
     return SyntaxTree{Children: elements}
 }
 
+func (t SyntaxTree) IsAtom() bool {
+    return len(t.Text) != 0
+}
+
+func (t SyntaxTree) IsList() bool {
+    return !t.IsAtom()
+}
+
 func (t SyntaxTree) String() string {
-    if len(t.Text) != 0 {
+    if t.IsAtom() {
         return t.Text
     }
 
