@@ -14,12 +14,12 @@ type Lexer struct {
 func (l *Lexer) GetToken() token.Token {
     //fmt.Println("getting token from '", l.s[l.pos:], "'")
 
-    if l.pos == len(l.s) {
-        //fmt.Println("EOF")
-        return token.EOF
-    }
-
     for {
+        if l.pos == len(l.s) {
+            //fmt.Println("EOF")
+            return token.EOF
+        }
+
         if m, _ := regexp.MatchString(" ", l.s[l.pos:l.pos + 1]); m {
             l.pos += 1
         } else {
@@ -57,6 +57,7 @@ func (l *Lexer) GetToken() token.Token {
 
     oldpos := l.pos
     l.pos = l.pos + next[0]
+    newpos := l.pos
 
     for {
         if m, _ := regexp.MatchString(" ", l.s[l.pos:l.pos + 1]); m {
@@ -70,7 +71,7 @@ func (l *Lexer) GetToken() token.Token {
     //fmt.Println("next: ", l.s[l.pos : l.pos+1])
     //fmt.Println("remain: ", l.s[l.pos:])
 
-    return token.Atom(l.s[oldpos:l.pos])
+    return token.Atom(l.s[oldpos:newpos])
 }
 
 func MakeLexer(str string) *Lexer {

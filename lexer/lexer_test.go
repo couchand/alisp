@@ -4,6 +4,35 @@ import "testing"
 //import "fmt"
 import "github.com/couchand/alisp/token"
 
+func TestSpaces(t *testing.T) {
+    l := MakeLexer("  (  foo  bar   baz    )   ")
+
+    if l.GetToken() != token.PAREN_OPEN {
+        t.Errorf("Expected open paren")
+    }
+
+    s := l.GetToken()
+    if s.Text != "foo" {
+        t.Errorf("Expected 'foo', got '%s'", s.Text)
+    }
+    s = l.GetToken()
+    if s.Text != "bar" {
+        t.Errorf("Expected 'bar', got '%s'", s.Text)
+    }
+    s = l.GetToken()
+    if s.Text != "baz" {
+        t.Errorf("Expected 'baz', got '%s'", s.Text)
+    }
+
+    if l.GetToken() != token.PAREN_CLOSE {
+        t.Errorf("Expected close paren")
+    }
+
+    if l.GetToken() != token.EOF {
+        t.Errorf("Expected EOF")
+    }
+}
+
 func TestLex(t *testing.T) {
     l := MakeLexer("(123 456 foobar)")
 
