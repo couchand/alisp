@@ -11,13 +11,13 @@ func TestLex(t *testing.T) {
         t.Errorf("Expected open paren")
     }
 
-    if l.GetToken() != token.ATOM {
+    if !l.GetToken().IsAtom() {
         t.Errorf("Expected atom")
     }
-    if l.GetToken() != token.ATOM {
+    if !l.GetToken().IsAtom() {
         t.Errorf("Expected atom")
     }
-    if l.GetToken() != token.ATOM {
+    if !l.GetToken().IsAtom() {
         t.Errorf("Expected atom")
     }
 
@@ -46,17 +46,17 @@ func TestNested(t *testing.T) {
     if l.GetToken() != token.PAREN_OPEN {
         t.Errorf("Expected open paren")
     }
-    if l.GetToken() != token.ATOM {
+    if !l.GetToken().IsAtom() {
         t.Errorf("Expected atom")
     }
     if l.GetToken() != token.PAREN_CLOSE {
         t.Errorf("Expected close paren")
     }
 
-    if l.GetToken() != token.ATOM {
+    if !l.GetToken().IsAtom() {
         t.Errorf("Expected atom")
     }
-    if l.GetToken() != token.ATOM {
+    if !l.GetToken().IsAtom() {
         t.Errorf("Expected atom")
     }
 

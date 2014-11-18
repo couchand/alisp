@@ -15,8 +15,8 @@ func Parse(l *lexer.Lexer) tree.SyntaxTree {
     if initial == token.PAREN_OPEN {
         return parseKernel(l)
     }
-    if initial == token.ATOM {
-        return tree.Atom()
+    if initial.IsAtom() {
+        return tree.Atom(initial.Text)
     }
     panic("Illegal input found!")
 }
@@ -35,8 +35,8 @@ func parseKernel(l *lexer.Lexer) tree.SyntaxTree {
         if t == token.PAREN_CLOSE {
             return tree.List(sl)
         }
-        if t == token.ATOM {
-            sl = append(sl, tree.Atom())
+        if t.IsAtom() {
+            sl = append(sl, tree.Atom(t.Text))
         }
     }
 }

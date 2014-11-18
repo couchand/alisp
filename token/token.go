@@ -2,9 +2,19 @@
 
 package token
 
-type Token int
+type Token struct {
+    int
+    Text string
+}
 
-const EOF = 0
-const PAREN_OPEN = 1
-const PAREN_CLOSE = 2
-const ATOM = 3
+var EOF         = Token{0, ""}
+var PAREN_OPEN  = Token{1, "("}
+var PAREN_CLOSE = Token{2, ")"}
+
+func (t Token) IsAtom() bool {
+    return t.int == 3
+}
+
+func Atom(s string) Token {
+    return Token{3, s}
+}

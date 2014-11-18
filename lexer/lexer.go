@@ -55,6 +55,7 @@ func (l *Lexer) GetToken() token.Token {
 
     //fmt.Println("l.pos = ", l.pos, ", next[0] = ", next[0], ", next[1] = ", next[1])
 
+    oldpos := l.pos
     l.pos = l.pos + next[0]
 
     for {
@@ -69,7 +70,7 @@ func (l *Lexer) GetToken() token.Token {
     //fmt.Println("next: ", l.s[l.pos : l.pos+1])
     //fmt.Println("remain: ", l.s[l.pos:])
 
-    return token.ATOM
+    return token.Atom(l.s[oldpos:l.pos])
 }
 
 func MakeLexer(str string) *Lexer {
