@@ -19,3 +19,15 @@ func TestList(t *testing.T) {
         t.Errorf("Expecting List")
     }
 }
+
+func TestString(t *testing.T) {
+    a := Atom()
+    sl := []SyntaxTree{ a }
+    l := List(sl)
+
+    str := l.String()
+
+    if str != "(())" {
+        t.Errorf("Incorrect string representation")
+    }
+}
