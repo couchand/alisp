@@ -50,7 +50,8 @@ func (l *Lexer) GetToken() token.Token {
     next := nextRE.FindStringIndex(l.s[l.pos:])
 
     if next == nil {
-        panic("Illegal input")
+        x := len(l.s) - l.pos
+        next = []int{ x, x }
     }
 
     //fmt.Println("l.pos = ", l.pos, ", next[0] = ", next[0], ", next[1] = ", next[1])
@@ -60,6 +61,9 @@ func (l *Lexer) GetToken() token.Token {
     newpos := l.pos
 
     for {
+        if l.pos == len(l.s) {
+            break
+        }
         if m, _ := regexp.MatchString(" ", l.s[l.pos:l.pos + 1]); m {
             l.pos += 1
         } else {

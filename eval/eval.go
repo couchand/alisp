@@ -5,32 +5,14 @@ import (
     "regexp"
     "strconv"
     "github.com/couchand/alisp/tree"
+    "github.com/couchand/alisp/types"
+    "github.com/couchand/alisp/builtin"
 )
 
-func sum(xs []int64) int64 {
-    var s int64 = 0
-    for _, x := range xs {
-        s += x
-    }
-    return s
-}
+var numberRE = regexp.MustCompile("^[0-9]+$")
+var nilRE = regexp.MustCompile("^nil$")
 
-func mul(xs []int64) int64 {
-    var p int64 = 1
-    for _, x := range xs {
-        p *= x
-    }
-    return p
-}
-
-var builtins = map[string](func([]int64)int64){
-    "+": sum,
-    "*": mul,
-}
-
-var numberRE = regexp.MustCompile("[0-9]+")
-
-func Eval(t tree.SyntaxTree) int64 {
+func Eval(t tree.SyntaxTree) types.Value {
     //fmt.Printf("Evaluating %v", t)
 
     if t.IsAtom() {
@@ -42,7 +24,9 @@ func Eval(t tree.SyntaxTree) int64 {
                 msg := fmt.Sprintf("Error converting int: %v", err)
                 panic(msg)
             }
-            return res
+            return types.Int(res)
+        } else if nilRE.MatchString(t.Text) {
+            return types.Nil()
         } else {
             msg := fmt.Sprintf("Unknown value '%s'", t.Text)
             panic(msg)
@@ -52,13 +36,13 @@ func Eval(t tree.SyntaxTree) int64 {
             panic("Illegal unit")
         }
         name := t.Children[0].Text
-        fn, ok := builtins[name]
+        fn, ok := builtin.Builtins[name]
         if !ok {
             msg := fmt.Sprintf("Unknown function '%s'", name)
             panic(msg)
         }
 
-        params := make([]int64, len(t.Children) - 1)
+        params := make([]types.Value, len(t.Children) - 1)
         for i, c := range t.Children {
             if i != 0 {
                 params[i - 1] = Eval(c)
