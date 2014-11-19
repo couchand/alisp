@@ -14,6 +14,18 @@ var atomRE = regexp.MustCompile("^'")
 var numberRE = regexp.MustCompile("^[0-9]+$")
 var nilRE = regexp.MustCompile("^nil$")
 
+func quote(arg tree.SyntaxTree) types.Value {
+    //fmt.Printf("Quoting %v\n", arg)
+    if arg.IsList() && len(arg.Children) == 0 {
+        //fmt.Println("Found an empty list")
+        return types.Nil()
+    }
+    //fmt.Println("Calling valify")
+    v := arg.Val()
+    //fmt.Printf("Quoted %v\n", v)
+    return v
+}
+
 func Eval(t tree.SyntaxTree) types.Value {
     //fmt.Printf("Evaluating %v", t)
 
@@ -43,6 +55,8 @@ func EvalScope(t tree.SyntaxTree, s *scope.Scope) types.Value {
             msg := fmt.Sprintf("Unknown value '%s'", t.Text)
             panic(msg)
         }
+    } else if t.IsQuote() {
+        return quote(t.Children[0])
     } else {
         if len(t.Children) == 0 {
             panic("Illegal unit")
@@ -53,16 +67,7 @@ func EvalScope(t tree.SyntaxTree, s *scope.Scope) types.Value {
             if len(t.Children) != 2 {
                 panic("Expected a single argument to quote")
             }
-            arg := t.Children[1]
-            //fmt.Printf("Quoting %v\n", arg)
-            if arg.IsList() && len(arg.Children) == 0 {
-                //fmt.Println("Found an empty list")
-                return types.Nil()
-            }
-            //fmt.Println("Calling valify")
-            v := arg.Val()
-            //fmt.Printf("Quoted %v\n", v)
-            return v
+            return quote(t.Children[1])
         }
 
         if name == "define" {

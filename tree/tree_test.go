@@ -13,6 +13,21 @@ func TestAtom(t *testing.T) {
     }
 }
 
+func TestQuote(t *testing.T) {
+    a := Atom("a")
+    q := Quote(a)
+
+    if !q.IsQuote() {
+        t.Errorf("Expecting Quote")
+    }
+    if len(q.Children) != 1 {
+        t.Errorf("Expecting quoted value")
+    }
+    if q.Children[0].Text != a.Text {
+        t.Errorf("Expecting exact quoted value")
+    }
+}
+
 func TestList(t *testing.T) {
     a, b, c := Atom("a"), Atom("b"), Atom("c")
     sl := []SyntaxTree{ a, b, c }

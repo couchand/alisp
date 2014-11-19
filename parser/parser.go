@@ -7,7 +7,7 @@ import "github.com/couchand/alisp/token"
 import "github.com/couchand/alisp/lexer"
 
 func quote(v tree.SyntaxTree) tree.SyntaxTree {
-    return tree.Atom("'" + v.Val().String())
+    return tree.Quote(v)
 }
 
 func Parse(l *lexer.Lexer) tree.SyntaxTree {

@@ -20,16 +20,24 @@ func Atom(s string) SyntaxTree {
     return SyntaxTree{Text: s}
 }
 
+func Quote(element SyntaxTree) SyntaxTree {
+    return SyntaxTree{Children: []SyntaxTree{ element }, Text: "'"}
+}
+
 func List(elements []SyntaxTree) SyntaxTree {
     return SyntaxTree{Children: elements}
 }
 
 func (t SyntaxTree) IsAtom() bool {
-    return len(t.Text) != 0
+    return !t.IsQuote() && len(t.Text) != 0
+}
+
+func (t SyntaxTree) IsQuote() bool {
+    return t.Text == "'"
 }
 
 func (t SyntaxTree) IsList() bool {
-    return !t.IsAtom()
+    return !t.IsAtom() && !t.IsQuote()
 }
 
 func (t SyntaxTree) String() string {
