@@ -9,8 +9,9 @@ type typeTag int
 
 const typeNil     = 0
 const typeInt     = 1
-const typeCons    = 2
-const typeLambda  = 3
+const typeAtom    = 2
+const typeCons    = 3
+const typeLambda  = 4
 
 type Value struct {
     tag typeTag
@@ -44,6 +45,22 @@ func (v Value) IntVal() int64 {
         panic(msg)
     }
     return v.val.(int64)
+}
+
+func Atom(val string) Value {
+    return Value{tag: typeAtom, val: val}
+}
+
+func (v Value) IsAtom() bool {
+    return v.tag == typeAtom
+}
+
+func (v Value) AtomVal() string {
+    if !v.IsAtom() {
+        msg := fmt.Sprintf("Value is not an atom: %v", v)
+        panic(msg)
+    }
+    return v.val.(string)
 }
 
 func Cons(left, right Value) Value {
@@ -93,6 +110,9 @@ func (v Value) String() string {
     if v.IsInt() {
         return fmt.Sprintf("%v", v.val)
     }
+    if v.IsAtom() {
+        return fmt.Sprintf("%v", v.val)
+    }
     if v.IsProperList() {
         l := v.Len()
         sl := make([]string, l)
@@ -111,5 +131,5 @@ func (v Value) String() string {
     if v.IsCons() {
         return fmt.Sprintf("(%v . %v)", v.CarVal().String(), v.CdrVal().String())
     }
-    return fmt.Sprintf("Value: %v", v)
+    panic("don't know what to do")
 }

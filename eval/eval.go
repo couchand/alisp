@@ -36,6 +36,23 @@ func Eval(t tree.SyntaxTree) types.Value {
             panic("Illegal unit")
         }
         name := t.Children[0].Text
+
+        if name == "quote" {
+            if len(t.Children) != 2 {
+                panic("Expected a single argument to quote")
+            }
+            arg := t.Children[1]
+            //fmt.Printf("Quoting %v\n", arg)
+            if arg.IsList() && len(arg.Children) == 0 {
+                //fmt.Println("Found an empty list")
+                return types.Nil()
+            }
+            //fmt.Println("Calling valify")
+            v := arg.Val()
+            //fmt.Printf("Quoted %v\n", v)
+            return v
+        }
+
         fn, ok := builtin.Builtins[name]
         if !ok {
             msg := fmt.Sprintf("Unknown function '%s'", name)

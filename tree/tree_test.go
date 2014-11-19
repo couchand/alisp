@@ -37,3 +37,21 @@ func TestString(t *testing.T) {
         t.Errorf("Incorrect string representation")
     }
 }
+
+func TestVal(t *testing.T) {
+    a, one := Atom("a"), Atom("1")
+    sl := []SyntaxTree{ a, one }
+    l := List(sl)
+
+    val := l.Val()
+
+    if !val.IsProperList() {
+        t.Errorf("Expected proper list")
+    }
+    if val.CarVal().AtomVal() != "a" {
+        t.Errorf("Expected 'a', got '%s'", val.CarVal().AtomVal())
+    }
+    if val.CdrVal().CarVal().IntVal() != 1 {
+        t.Errorf("Expected 1, got %v", val.CdrVal().CarVal().IntVal())
+    }
+}
