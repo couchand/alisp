@@ -9,9 +9,12 @@ import (
     "github.com/couchand/alisp/lexer"
     "github.com/couchand/alisp/parser"
     "github.com/couchand/alisp/eval"
+    "github.com/couchand/alisp/scope"
 )
 
 func Start(input *bufio.Reader, output *bufio.Writer) {
+    root := scope.RootScope()
+
     log := func(format string, params ...interface{}) {
         fmt.Fprintf(output, format + "\n", params...)
         output.Flush()
@@ -29,7 +32,8 @@ func Start(input *bufio.Reader, output *bufio.Writer) {
             }
         }()
 
-        log("%v", eval.Eval(t))
+        log("%v", eval.EvalScope(t, root))
+        //log("%v", root)
     }
 
     parse := func(l string) tree.SyntaxTree {

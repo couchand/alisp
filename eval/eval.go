@@ -7,6 +7,7 @@ import (
     "github.com/couchand/alisp/tree"
     "github.com/couchand/alisp/types"
     "github.com/couchand/alisp/builtin"
+    "github.com/couchand/alisp/scope"
 )
 
 var numberRE = regexp.MustCompile("^[0-9]+$")
@@ -14,6 +15,12 @@ var nilRE = regexp.MustCompile("^nil$")
 
 func Eval(t tree.SyntaxTree) types.Value {
     //fmt.Printf("Evaluating %v", t)
+
+    return EvalScope(t, scope.RootScope())
+}
+
+func EvalScope(t tree.SyntaxTree, s *scope.Scope) types.Value {
+    //fmt.Println("%v", s)
 
     if t.IsAtom() {
         //fmt.Printf("Atomizing %v", t)
@@ -27,6 +34,8 @@ func Eval(t tree.SyntaxTree) types.Value {
             return types.Int(res)
         } else if nilRE.MatchString(t.Text) {
             return types.Nil()
+        } else if s.Has(t.Text) {
+            return s.Get(t.Text)
         } else {
             msg := fmt.Sprintf("Unknown value '%s'", t.Text)
             panic(msg)
@@ -53,6 +62,18 @@ func Eval(t tree.SyntaxTree) types.Value {
             return v
         }
 
+        if name == "define" {
+            if len(t.Children) != 3 {
+                panic("Expected exactly two arguments to define")
+            }
+            key := t.Children[1]
+            value := t.Children[2]
+            if !key.IsAtom() {
+                panic("Expected name for define")
+            }
+            return s.Set(key.Text, EvalScope(value, s))
+        }
+
         fn, ok := builtin.Builtins[name]
         if !ok {
             msg := fmt.Sprintf("Unknown function '%s'", name)
@@ -62,7 +83,7 @@ func Eval(t tree.SyntaxTree) types.Value {
         params := make([]types.Value, len(t.Children) - 1)
         for i, c := range t.Children {
             if i != 0 {
-                params[i - 1] = Eval(c)
+                params[i - 1] = EvalScope(c, s.ChildScope())
             }
         }
 
