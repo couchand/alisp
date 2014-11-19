@@ -45,8 +45,12 @@ func (l *Lexer) GetToken() token.Token {
         //fmt.Println("close paren")
         return token.PAREN_CLOSE
     }
+    if cur == '\'' {
+        l.pos = l.pos + 1
+        return token.QUOTE
+    }
 
-    nextRE := regexp.MustCompile("[ ()]")
+    nextRE := regexp.MustCompile("[ ()']")
     next := nextRE.FindStringIndex(l.s[l.pos:])
 
     if next == nil {

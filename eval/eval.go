@@ -10,6 +10,7 @@ import (
     "github.com/couchand/alisp/scope"
 )
 
+var atomRE = regexp.MustCompile("^'")
 var numberRE = regexp.MustCompile("^[0-9]+$")
 var nilRE = regexp.MustCompile("^nil$")
 
@@ -34,6 +35,8 @@ func EvalScope(t tree.SyntaxTree, s *scope.Scope) types.Value {
             return types.Int(res)
         } else if nilRE.MatchString(t.Text) {
             return types.Nil()
+        } else if atomRE.MatchString(t.Text) {
+            return types.Atom(t.Text[1:])
         } else if s.Has(t.Text) {
             return s.Get(t.Text)
         } else {

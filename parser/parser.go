@@ -6,6 +6,10 @@ import "github.com/couchand/alisp/tree"
 import "github.com/couchand/alisp/token"
 import "github.com/couchand/alisp/lexer"
 
+func quote(v tree.SyntaxTree) tree.SyntaxTree {
+    return tree.Atom("'" + v.Val().String())
+}
+
 func Parse(l *lexer.Lexer) tree.SyntaxTree {
     initial := l.GetToken()
 
@@ -14,6 +18,9 @@ func Parse(l *lexer.Lexer) tree.SyntaxTree {
     }
     if initial == token.PAREN_OPEN {
         return parseKernel(l)
+    }
+    if initial == token.QUOTE {
+        return quote(Parse(l))
     }
     if initial.IsAtom() {
         return tree.Atom(initial.Text)
@@ -34,6 +41,9 @@ func parseKernel(l *lexer.Lexer) tree.SyntaxTree {
         }
         if t == token.PAREN_CLOSE {
             return tree.List(sl)
+        }
+        if t == token.QUOTE {
+            sl = append(sl, quote(Parse(l)))
         }
         if t.IsAtom() {
             sl = append(sl, tree.Atom(t.Text))

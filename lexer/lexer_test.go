@@ -33,6 +33,27 @@ func TestSpaces(t *testing.T) {
     }
 }
 
+func TestQuote(t *testing.T) {
+    l := MakeLexer("'bar'(1 2 3)")
+
+    if l.GetToken() != token.QUOTE {
+        t.Errorf("Expected quote")
+    }
+
+    s := l.GetToken()
+    if s.Text != "bar" {
+        t.Errorf("Expected 'bar', got '%s'", s.Text)
+    }
+
+    if l.GetToken() != token.QUOTE {
+        t.Errorf("Expected quote")
+    }
+
+    if l.GetToken() != token.PAREN_OPEN {
+        t.Errorf("Expected open paren")
+    }
+}
+
 func TestLex(t *testing.T) {
     l := MakeLexer("(123 456 foobar)")
 
