@@ -6,12 +6,16 @@ import "regexp"
 //import "fmt"
 import "github.com/couchand/alisp/token"
 
-type Lexer struct {
+type Lexer interface {
+    GetToken() token.Token
+}
+
+type lexer struct {
     s string
     pos int
 }
 
-func (l *Lexer) GetToken() token.Token {
+func (l *lexer) GetToken() token.Token {
     //fmt.Println("getting token from '", l.s[l.pos:], "'")
 
     for {
@@ -82,6 +86,6 @@ func (l *Lexer) GetToken() token.Token {
     return token.Atom(l.s[oldpos:newpos])
 }
 
-func MakeLexer(str string) *Lexer {
-    return &Lexer{ s: str }
+func MakeLexer(str string) Lexer {
+    return &lexer{ s: str }
 }

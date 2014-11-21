@@ -10,11 +10,11 @@ func quote(v tree.SyntaxTree) tree.SyntaxTree {
     return tree.Quote(v)
 }
 
-func Parse(l *lexer.Lexer) tree.SyntaxTree {
+func Parse(l lexer.Lexer) tree.SyntaxTree {
     initial := l.GetToken()
 
     if initial == token.EOF {
-        panic("No input found!")
+        return tree.SyntaxTree{}
     }
     if initial == token.PAREN_OPEN {
         return parseKernel(l)
@@ -28,7 +28,7 @@ func Parse(l *lexer.Lexer) tree.SyntaxTree {
     panic("Illegal input found!")
 }
 
-func parseKernel(l *lexer.Lexer) tree.SyntaxTree {
+func parseKernel(l lexer.Lexer) tree.SyntaxTree {
     sl := []tree.SyntaxTree{}
 
     for {
@@ -48,5 +48,6 @@ func parseKernel(l *lexer.Lexer) tree.SyntaxTree {
         if t.IsAtom() {
             sl = append(sl, tree.Atom(t.Text))
         }
+        //panic("Illegal input found!")
     }
 }
