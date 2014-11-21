@@ -304,6 +304,10 @@ func executeCall(lambda types.Value, arguments []types.Value) types.Value {
     return evalScope([]types.Value{ expr, bound })
 }
 
+func falsey(condition types.Value) bool {
+    return condition.IsNil() || condition.IsInt() && condition.IntVal() == 0
+}
+
 func evalScope(ps []types.Value) types.Value {
     if len(ps) != 2 {
         panic("eval-scope expects two parameters")
@@ -361,6 +365,21 @@ func evalScope(ps []types.Value) types.Value {
             }
             if name == "define" {
                 panic("nothing yet")
+            }
+
+            if name == "if" {
+                if expr.CdrVal().Len() != 3 {
+                    panic("if expects three parameters")
+                }
+                condition := expr.CdrVal().CarVal()
+                consequent := expr.CdrVal().CdrVal().CarVal()
+                alternate := expr.CdrVal().CdrVal().CdrVal().CarVal()
+
+                if !falsey(evalScope([]types.Value{condition, scope})) {
+                    return evalScope([]types.Value{consequent, scope})
+                } else {
+                    return evalScope([]types.Value{alternate, scope})
+                }
             }
 
             fn, exists := Builtins[name]

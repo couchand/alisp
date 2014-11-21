@@ -64,7 +64,7 @@ func buildBindingMapKernel(s *scope.Scope, params tree.SyntaxTree, expression tr
         } else if nilRE.MatchString(name) {
             return []types.Value{}
         }
-        if name == "lambda" || name == "define" || name == "quote" {
+        if name == "lambda" || name == "define" || name == "quote" || name == "if" {
             return []types.Value{}
         }
         _, builtin := builtin.Builtins[name]
