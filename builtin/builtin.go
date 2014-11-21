@@ -8,7 +8,7 @@ import (
     "github.com/couchand/alisp/types"
 )
 
-var numberRE = regexp.MustCompile("^[0-9]+$")
+var numberRE = regexp.MustCompile("^-?[0-9]+$")
 var nilRE = regexp.MustCompile("^nil$")
 
 func sum(xs []types.Value) types.Value {
@@ -19,12 +19,67 @@ func sum(xs []types.Value) types.Value {
     return types.Int(s)
 }
 
+func sub(xs []types.Value) types.Value {
+    if len(xs) == 0 {
+        return types.Int(0)
+    }
+    s := xs[0].IntVal()
+    for _, x := range xs[1:] {
+        s -= x.IntVal()
+    }
+    return types.Int(s)
+}
+
 func mul(xs []types.Value) types.Value {
     var p int64 = 1
     for _, x := range xs {
         p *= x.IntVal()
     }
     return types.Int(p)
+}
+
+func div(xs []types.Value) types.Value {
+    if len(xs) == 0 {
+        return types.Int(1)
+    }
+    s := xs[0].IntVal()
+    for _, x := range xs[1:] {
+        s /= x.IntVal()
+    }
+    return types.Int(s)
+}
+
+func mod(xs []types.Value) types.Value {
+    if len(xs) != 2 {
+        panic("mod expects two parameters only")
+    }
+    return types.Int(xs[0].IntVal() % xs[1].IntVal())
+}
+
+func eq(xs []types.Value) types.Value {
+    if len(xs) != 2 {
+        panic("eq expects two parameters only")
+    }
+    if xs[0].IsNil() && xs[1].IsNil() {
+        return types.Int(1)
+    }
+    if xs[0].IsInt() && xs[1].IsInt() {
+        if xs[0].IntVal() == xs[1].IntVal() {
+            return types.Int(1)
+        }
+    }
+    if xs[0].IsCons() && xs[1].IsCons() {
+        head := eq([]types.Value{ xs[0].CarVal(), xs[1].CarVal() })
+
+        if head.IsInt() && head.IntVal() == 1 {
+            tail := eq([]types.Value{ xs[0].CdrVal(), xs[1].CdrVal() })
+
+            if tail.IsInt() && tail.IntVal() == 1 {
+                return types.Int(1)
+            }
+        }
+    }
+    return types.Int(0)
 }
 
 func cons(ps []types.Value) types.Value {
@@ -240,7 +295,10 @@ func iff(ps []types.Value) types.Value {
 
 var Builtins = map[string](func([]types.Value)types.Value){
     "+": sum,
+    "-": sub,
     "*": mul,
+    "/": div,
+    "%": mod,
     "cons": cons,
     "car": car,
     "cdr": cdr,
@@ -253,6 +311,7 @@ var Builtins = map[string](func([]types.Value)types.Value){
     "nil?": nilQues,
     "cons?": consQues,
     "list?": listQues,
+    "eq?": eq,
 //    "if": iff,
     "unbound": unbound,
     "bound": bound,

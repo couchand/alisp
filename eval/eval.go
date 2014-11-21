@@ -11,7 +11,7 @@ import (
 )
 
 var atomRE = regexp.MustCompile("^'")
-var numberRE = regexp.MustCompile("^[0-9]+$")
+var numberRE = regexp.MustCompile("^-?[0-9]+$")
 var nilRE = regexp.MustCompile("^nil$")
 
 func quote(arg tree.SyntaxTree) types.Value {

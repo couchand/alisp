@@ -9,7 +9,7 @@ import (
     "github.com/couchand/alisp/types"
 )
 
-var numberRE = regexp.MustCompile("^[0-9]+$")
+var numberRE = regexp.MustCompile("^-?[0-9]+$")
 
 type SyntaxTree struct {
     Children []SyntaxTree
