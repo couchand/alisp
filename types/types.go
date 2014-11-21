@@ -80,11 +80,10 @@ func (v Value) IsProperList() bool {
 }
 
 func (v Value) Len() int64 {
-    tail := v.CdrVal()
-    if !tail.IsCons() {
-        return 1
+    if !v.IsCons() {
+        return 0
     }
-    return 1 + tail.Len()
+    return 1 + v.CdrVal().Len()
 }
 
 func (v Value) CarVal() Value {
