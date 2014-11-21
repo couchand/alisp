@@ -1,0 +1,6 @@
+(define not (lambda (x) (if x 0 1)))
+(define not-nil? (lambda (x) (not (nil? x))))
+(define or (lambda (a b) (+ a b)))
+(define and (lambda (a b) (* a b)))
+(define zero? (lambda (x) (and (not x) (not-nil? x))))
+(and (zero? 0) (or (not (zero? 1)) 0))
